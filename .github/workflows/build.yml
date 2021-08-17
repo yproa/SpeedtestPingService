@@ -39,6 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - uses: actions/checkout@v2
       - name: Download result of the first job
         uses: actions/download-artifact@v2
         with:
@@ -60,8 +61,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./out/artifacts
           push: true
-          tags: bitskoff/speedtest-service:0.0.1
+          tags: ${{ secrets.DOCKER_USERNAME }}/speedtest-service-0.0.1
 
  
