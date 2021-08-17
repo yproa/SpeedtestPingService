@@ -33,7 +33,7 @@ jobs:
       - name: Upload jar to artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.artifactName }}
+          name: speedtest-ping-service-main.jar
           path: out/artifacts/*  
   publish-to-dockerhub:
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
       - name: Download result of the first job
         uses: actions/download-artifact@v2
         with:
-          name: speedtest-ping-service-0.0.1.${{ github.run_number }}-develop
+          name: speedtest-ping-service-develop
       - name: List all artifacts to compact
         run: ls ./
 
@@ -58,6 +58,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/speedtest-service-0.0.1
+          tags: ${{ secrets.DOCKER_USERNAME }}/speedtest-service-main
 
  
