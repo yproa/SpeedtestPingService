@@ -56,7 +56,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: ./out/artifacts
+          context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/speedtest-service-0.0.1
 
