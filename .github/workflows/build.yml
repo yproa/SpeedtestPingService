@@ -44,11 +44,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: speedtest-ping-service-0.0.1.${{ github.run_number }}-develop
-
-      - name: Copy Dockerfile
-        run: |
-            mv Dockerfile out/artifacts/
-
       - name: List all artifacts to compact
         run: ls ./
 
