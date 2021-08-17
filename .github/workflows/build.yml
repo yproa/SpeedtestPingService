@@ -40,10 +40,14 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v2
+      - name: Setup artifact name variable
+        run: |
+          echo "ARTIFACT_NAME=speedtest-ping-service-$(cat VERSION).$GITHUB_RUN_NUMBER$REF" > $GITHUB_ENV
+          
       - name: Download result of the first job
         uses: actions/download-artifact@v2
         with:
-          name: speedtest-ping-service-main.jar
+          name: ${{ env.ARTIFACT_NAME }}
       - name: List all artifacts to compact
         run: ls ./
 
