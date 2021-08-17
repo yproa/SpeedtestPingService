@@ -1,0 +1,37 @@
+name: Java CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: creating output dirs
+        run: mkdir -p out/production && mkdir -p out/artifacts
+      - name: compiling classes 
+        run: javac -d out/production src/Main.java src/PingCheckServer.java
+      - name: Create file with artifactName variable
+        run: |
+          REF=$(echo "-${GITHUB_REF#refs/heads/}" | sed 's/\//-/g')
+          if [ ${#REF} -eq 1 ]; then REF=""; fi
+          ARTIFACT_NAME="speedtest-ping-service-$(cat VERSION).$GITHUB_RUN_NUMBER$REF"
+          mkdir -p .github/variables
+          echo "{\"variables\": [{\"name\": \"artifactName\", \"value\": \"$ARTIFACT_NAME\" }]}" > .github/variables/variables.json
+      - name: Set artifactName variable
+        uses: deep-mm/set-variables@v1.0
+        with:
+          variableFileName: 'variables'   
+      - name: building jar
+        run: jar cmf META-INF/MANIFEST.MF "out/artifacts/${{ env.artifactName }}.jar"  -C out/production Main.class -C out/production PingCheckServer.class 
+      - name: Upload jar to artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.artifactName }}
+          path: out/artifacts/*
