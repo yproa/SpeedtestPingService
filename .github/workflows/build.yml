@@ -34,4 +34,34 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.artifactName }}
-          path: out/artifacts/*
+          path: out/artifacts/*  
+  publish-to-dockerhub:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download result of the first job
+        uses: actions/download-artifact@v2
+        with:
+          name: speedtest-service-0.0.1.${{ github.run_number }}-develop
+
+      - name: Copy Dockerfile
+        run: |
+            mv Dockerfile out/artifacts/
+
+      - name: List all artifacts to compact
+        run: ls ./
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: bitskoff/speedtest-service:0.0.1
+
+ 
